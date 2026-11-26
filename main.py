@@ -51,6 +51,12 @@ def main():
     data = ENTRY.encode("utf-8")
     with open(path, "wb") as f:
         f.write(data)
+    # Write-verify: read back what was written and confirm it matches ENTRY.
+    with open(path, "rb") as f:
+        written = f.read()
+    if written != data or hashlib.sha256(written).hexdigest() != hashlib.sha256(data).hexdigest():
+        print("error: written entry.txt does not match ENTRY", file=sys.stderr)
+        raise SystemExit(1)
     digest = hashlib.sha256(data).hexdigest()
     print("wrote %s (%d chars, sha256 %s)" % (path, len(ENTRY), digest))
     return 0
